@@ -8,10 +8,6 @@ import {
   Tooltip,
 } from "recharts";
 
-import {
-  useGetDashboardStatsQuery,
-  useGetUserMonthlyStatsQuery,
-} from "../../Api/dashboardApi";
 import Revenue from "../Charts/Revenue";
 import up from "../../assets/images/up.png";
 import down from "../../assets/images/down.png";
@@ -35,7 +31,7 @@ const Overview = () => {
     { name: "60k", value: 60 },
   ];
 
-  const CustomTooltip = ({ active, payload, label }) => {
+  const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       if (data.highlight) {
