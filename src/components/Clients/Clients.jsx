@@ -1,341 +1,136 @@
-"use client"
+import React, { useState } from "react";
+import { Search, Edit2, Trash2, Eye } from "lucide-react";
 
-import { useState, useEffect } from "react"
-import { LuEye } from "react-icons/lu"
-import { RiDeleteBin6Line } from "react-icons/ri"
-import avatar from "../../assets/images/Avatar.png"
-import toast from "react-hot-toast"
-import { Link } from "react-router-dom"
-import DeleteConfirmationModal from "../Shared/DeleteConfirmationModal"
-import { useDeleteUserMutation, useGetUsersQuery } from "../../Api/dashboardApi"
+export default function UserManagementTable() {
+  const users = [
+    { id: 1, name: "Alyvia Kelley", status: "Active", email: "a.kelley@gmail.com", dateOfBirth: "06/18/1978" },
+    { id: 2, name: "Jaiden Nixon", status: "Active", email: "jaiden.n@gmail.com", dateOfBirth: "09/30/1963" },
+    { id: 3, name: "Ace Foley", status: "Blocked", email: "ace.fo@yahoo.com", dateOfBirth: "12/09/1985" },
+    { id: 4, name: "Nikolai Schmidt", status: "Active", email: "nikolai.schmidt1984@outlook.com", dateOfBirth: "03/22/1956" },
+    { id: 5, name: "Clayton Charles", status: "Active", email: "me@clayton.com", dateOfBirth: "10/14/1971" },
+    { id: 6, name: "Prince Chen", status: "Active", email: "prince.chen1987@gmail.com", dateOfBirth: "07/05/1992" },
+    { id: 7, name: "Reece Duran", status: "Active", email: "reece@yahoo.com", dateOfBirth: "05/26/1980" },
+    { id: 8, name: "Anastasia Mcdaniel", status: "Active", email: "anastasia.spring@mcdaniel12.com", dateOfBirth: "02/11/1968" },
+    { id: 9, name: "Melvin Boyle", status: "Blocked", email: "Me.boyle@gmail.com", dateOfBirth: "08/03/1974" },
+    { id: 10, name: "Kallee Thomas", status: "Blocked", email: "Kallee.thomas@gmail.com", dateOfBirth: "11/28/1954" },
+    { id: 11, name: "Alyvia Kelley", status: "Active", email: "a.kelley@gmail.com", dateOfBirth: "06/18/1978" },
+    { id: 12, name: "Jaiden Nixon", status: "Active", email: "jaiden.n@gmail.com", dateOfBirth: "09/30/1963" },
+    { id: 13, name: "Ace Foley", status: "Blocked", email: "ace.fo@yahoo.com", dateOfBirth: "12/09/1985" },
+    { id: 14, name: "Nikolai Schmidt", status: "Active", email: "nikolai.schmidt1984@outlook.com", dateOfBirth: "03/22/1956" },
+    { id: 15, name: "Clayton Charles", status: "Active", email: "me@clayton.com", dateOfBirth: "10/14/1971" },
+    { id: 16, name: "Prince Chen", status: "Active", email: "prince.chen1987@gmail.com", dateOfBirth: "07/05/1992" },
+    { id: 17, name: "Reece Duran", status: "Active", email: "reece@yahoo.com", dateOfBirth: "05/26/1980" },
+    { id: 18, name: "Anastasia Mcdaniel", status: "Active", email: "anastasia.spring@mcdaniel12.com", dateOfBirth: "02/11/1968" },
+    { id: 19, name: "Melvin Boyle", status: "Blocked", email: "Me.boyle@gmail.com", dateOfBirth: "08/03/1974" },
+    { id: 20, name: "Kallee Thomas", status: "Blocked", email: "Kallee.thomas@gmail.com", dateOfBirth: "11/28/1954" },
+  ];
 
-export default function UserDataTable() {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [query, setQuery] = useState("")
-  const [sortBy, setSortBy] = useState("")
-  const [openDltModal, setOpenDltModal] = useState(false)
-  const [selectedUserId, setSelectedUserId] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-  // Fetch users with pagination
-  const { data: usersData, isLoading, error, refetch } = useGetUsersQuery(currentPage)
-  const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation()
+  const totalPages = Math.ceil(users.length / itemsPerPage);
 
-  // Calculate total pages
-  const totalPages = usersData ? Math.ceil(usersData.count / 5) : 1
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentUsers = users.slice(indexOfFirstItem, indexOfLastItem);
 
-  // Smart pagination handler - automatically navigate to appropriate page
-  useEffect(() => {
-    if (usersData && usersData.results.length === 0 && currentPage > 1) {
-      // If current page is empty and we're not on page 1, go to previous page
-      setCurrentPage(currentPage - 1)
-    }
-  }, [usersData, currentPage])
-
-  // Handle page changes and ensure we don't go beyond available pages
-  useEffect(() => {
-    if (totalPages > 0 && currentPage > totalPages) {
-      setCurrentPage(totalPages)
-    }
-  }, [totalPages, currentPage])
-
-  const handleDeleteUser = async () => {
-    try {
-      const currentPageUsersCount = filteredUsers.length
-      const isLastUserOnPage = currentPageUsersCount === 1
-      const isNotFirstPage = currentPage > 1
-
-      await deleteUser(selectedUserId).unwrap()
-      toast.success("User deleted successfully")
-
-      // Smart navigation after deletion
-      if (isLastUserOnPage && isNotFirstPage) {
-        // If deleting the last user on a page that's not the first page,
-        // navigate to the previous page
-        setCurrentPage(currentPage - 1)
-      }
-
-      // Refetch data
-      refetch()
-    } catch (error) {
-      toast.error("Failed to delete user")
-      console.error("Delete error:", error)
-    } finally {
-      setOpenDltModal(false)
-    }
-  }
-
-  // Get package type from package_name
-  const getPackageType = (packageName) => {
-    if (!packageName || !packageName.package_name) return "Free"
-    const name = packageName.package_name.toLowerCase()
-    if (name.includes("year")) return "Yearly"
-    if (name.includes("month")) return "Monthly"
-    return "Free"
-  }
-
-  // Filter users based on search query and sort
-  const filteredUsers =
-    usersData?.results?.filter((user) => {
-      const packageType = getPackageType(user.package_name)
-      const matchesType = sortBy === "" || packageType === sortBy
-      const matchesQuery =
-        user.fullname?.toLowerCase().includes(query.toLowerCase()) ||
-        user.email?.toLowerCase().includes(query.toLowerCase()) ||
-        false
-      return matchesType && matchesQuery
-    }) || []
-
-  // Get type color
-  const getTypeColor = (packageName) => {
-    const type = getPackageType(packageName)
-    switch (type) {
-      case "Yearly":
-        return "text-green-500"
-      case "Monthly":
-        return "text-yellow-500"
-      case "Free":
-        return "text-neutral/80"
-      default:
-        return "text-neutral/80"
-    }
-  }
-
-  // Handle pagination with bounds checking
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage)
-    }
-  }
-
-  // Handle button click with event propagation stop
-  const handleButtonClick = (event, modalSetter) => {
-    event.stopPropagation()
-    modalSetter(true)
-  }
-
-  // Reset to first page when filters change
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [query, sortBy])
-
-  if (error) {
+  const StatusBadge = ({ status }) => {
+    const isActive = status === "Active";
     return (
-      <div className="bg-accent font-lora h-[90vh] flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-500 mb-4">Error loading users: {error.message}</div>
-          <button
-            onClick={() => {
-              setCurrentPage(1)
-              refetch()
-            }}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-          >
-            Retry
-          </button>
-        </div>
+      <div className="flex items-center gap-2">
+        <div className={`w-2 h-2 rounded-full ${isActive ? "bg-green-500" : "bg-black"}`}></div>
+        <span className={`text-sm ${isActive ? "text-green-600" : "text-gray-800"}`}>{status}</span>
       </div>
-    )
-  }
+    );
+  };
 
   return (
-    <div className="bg-accent font-lora h-[90vh]">
-      <div className="px-8 rounded-lg">
-        {/* Search and filter bar */}
-        <div className="p-4 flex justify-between items-center">
-          <h1 className="text-3xl font-semibold">Client Management</h1>
-          <div className="flex items-center gap-4">
-            {/* search */}
-            <input
-              type="text"
-              placeholder="Search by name or email..."
-              className="p-2 border rounded-md bg-white"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-            {/* filter */}
-            <div className="relative">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="appearance-none bg-white border border-gray-300 rounded-md pl-6 pr-6 py-2 focus:outline-none focus:ring-1"
-              >
-                <option value={""}>All</option>
-                <option value={"Yearly"}>Sort by: Yearly</option>
-                <option value={"Monthly"}>Sort by: Monthly</option>
-                <option value={"Free"}>Sort by: Free</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                  <path
-                    fillRule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
+    <div className="bg-white rounded-lg overflow-hidden w-10/12 mx-auto my-auto">
+      {/* Search Header */}
+      <div className="p-4 border-gray bg-gray-50">
+        <div className="relative max-w-sm ml-auto">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <input
+            type="text"
+            placeholder="Search..."
+            className="pl-10 pr-4 py-2 w-full border border-gray rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
         </div>
+      </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full mx-auto mt-10">
-            <thead>
-              <tr>
-                <th className="px-6 py-3 text-left text-sm font-medium text-neutral tracking-wider">User name</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-neutral tracking-wider">Email</th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-neutral tracking-wider">Type</th>
-                <th className="px-6 py-3 text-right text-sm font-medium text-neutral tracking-wider">Action</th>
+      {/* Table */}
+      <div className="overflow-x-auto  border-2 rounded-lg border-gray">
+        <table className="w-full shadow-lg bg-white">
+          <thead>
+            <tr className="border-b border-gray bg-gray-50">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Full Name</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">E-Mail</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date of Birth</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray">
+            {currentUsers.map((user) => (
+              <tr key={user.id} className="hover:bg-gray-50">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.id}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.name}</td>
+                <td className="px-6 py-4 whitespace-nowrap"><StatusBadge status={user.status} /></td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.dateOfBirth}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <div className="flex items-center justify-end gap-2">
+                    <button className="text-gray-400 hover:text-blue-600 p-1"><Edit2 className="w-4 h-4" /></button>
+                    <button className="text-gray-400 hover:text-red-600 p-1"><Trash2 className="w-4 h-4" /></button>
+                    <button className="text-gray-400 hover:text-gray-600 p-1"><Eye className="w-4 h-4" /></button>
+                  </div>
+                </td>
               </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {isLoading ? (
-                <tr>
-                  <td colSpan="4" className="px-6 py-4 text-center">
-                    <div className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
-                      <span className="ml-2">Loading users...</span>
-                    </div>
-                  </td>
-                </tr>
-              ) : filteredUsers.length === 0 ? (
-                <tr>
-                  <td colSpan="4" className="px-6 py-4 text-center">
-                    <div className="py-8">
-                      <div className="text-gray-500 mb-2">
-                        {query || sortBy ? "No users found matching your criteria" : "No users found"}
-                      </div>
-                      {(query || sortBy) && (
-                        <button
-                          onClick={() => {
-                            setQuery("")
-                            setSortBy("")
-                          }}
-                          className="text-blue-500 hover:text-blue-700 text-sm"
-                        >
-                          Clear filters
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ) : (
-                filteredUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <img
-                          className="w-8 h-8 mr-4 rounded-full"
-                          src={user.image || avatar}
-                          alt=""
-                          onError={(e) => {
-                            e.target.src = avatar
-                          }}
-                        />
-                        <div className="text-sm font-medium text-gray-900">{user.fullname || "No Name"}</div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-600">{user.email}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className={`text-sm ${getTypeColor(user.package_name)}`}>
-                        {getPackageType(user.package_name)}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap space-x-5 text-right">
-                      <Link to={`/clients/${user.id}`}>
-                        <button>
-                          <LuEye className="text-2xl cursor-pointer" />
-                        </button>
-                      </Link>
-                      <button
-                        onClick={(e) => {
-                          handleButtonClick(e, setOpenDltModal)
-                          setSelectedUserId(user.id)
-                        }}
-                        disabled={isDeleting}
-                      >
-                        <RiDeleteBin6Line className="text-2xl text-red-500 cursor-pointer" />
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Pagination */}
+      <div className="px-6 py-3 bg-gray-50">
+        <div className="flex items-center justify-center">
+          <nav className="flex items-center space-x-1">
+            {/* Prev button */}
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50"
+            >
+              &lt;
+            </button>
+
+            {/* Page numbers */}
+            {[...Array(totalPages)].map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentPage(index + 1)}
+                className={`px-3 py-2 text-sm rounded-md ${
+                  currentPage === index + 1
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                {index + 1}
+              </button>
+            ))}
+
+            {/* Next button */}
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50"
+            >
+              &gt;
+            </button>
+          </nav>
         </div>
-
-        {/* Enhanced Pagination */}
-        {usersData && usersData.count > 0 && (
-          <div className="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6 mt-4">
-            <div className="flex items-center justify-between w-full">
-              <div className="flex items-center">
-                <p className="text-sm text-gray-700">
-                  Showing{" "}
-                  <span className="font-medium">{filteredUsers.length > 0 ? (currentPage - 1) * 5 + 1 : 0}</span> to{" "}
-                  <span className="font-medium">{Math.min(currentPage * 5, usersData.count)}</span> of{" "}
-                  <span className="font-medium">{usersData.count}</span> results
-                </p>
-              </div>
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1 || isLoading}
-                  className="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Previous
-                </button>
-
-                {/* Page numbers */}
-                <div className="flex items-center space-x-1">
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    let pageNum
-                    if (totalPages <= 5) {
-                      pageNum = i + 1
-                    } else if (currentPage <= 3) {
-                      pageNum = i + 1
-                    } else if (currentPage >= totalPages - 2) {
-                      pageNum = totalPages - 4 + i
-                    } else {
-                      pageNum = currentPage - 2 + i
-                    }
-
-                    return (
-                      <button
-                        key={pageNum}
-                        onClick={() => handlePageChange(pageNum)}
-                        className={`px-3 py-1 text-sm rounded-md ${
-                          currentPage === pageNum
-                            ? "bg-blue-500 text-white"
-                            : "bg-white border border-gray-300 hover:bg-gray-50"
-                        }`}
-                      >
-                        {pageNum}
-                      </button>
-                    )
-                  })}
-                </div>
-
-                <button
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages || isLoading}
-                  className="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Next
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <DeleteConfirmationModal
-          isOpen={openDltModal}
-          onClose={() => setOpenDltModal(false)}
-          onConfirm={handleDeleteUser}
-          isLoading={isDeleting}
-        />
       </div>
     </div>
-  )
+  );
 }
