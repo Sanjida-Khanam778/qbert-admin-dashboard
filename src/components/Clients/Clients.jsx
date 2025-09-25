@@ -1,8 +1,7 @@
-import React, { useState } from "react";
-import { Search, Edit2, Trash2, Eye, Blocks, BlocksIcon } from "lucide-react";
+import { useState } from "react";
+import { Search, Trash2, Eye } from "lucide-react";
 import { TbMathGreater } from "react-icons/tb";
 import { PiLessThanBold } from "react-icons/pi";
-import { GoBlocked } from "react-icons/go";
 import { MdOutlineBlock } from "react-icons/md";
 import { ProfilePopup } from "./ProfilePopup";
 
