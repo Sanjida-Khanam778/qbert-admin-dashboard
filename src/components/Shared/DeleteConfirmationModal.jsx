@@ -6,7 +6,7 @@ const DeleteConfirmationModal = ({
   isOpen,
   onClose,
   onConfirm,
-  title = "Are you sure !!",
+  title = "Are you sure ?",
   message = "Do you want to delete this item ?",
   confirmText = "Delete",
 }) => {

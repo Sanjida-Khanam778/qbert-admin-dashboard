@@ -4,9 +4,11 @@ import { TbMathGreater } from "react-icons/tb";
 import { PiLessThanBold } from "react-icons/pi";
 import { MdOutlineBlock } from "react-icons/md";
 import { ProfilePopup } from "./ProfilePopup";
+import DeleteConfirmationModal from "../Shared/DeleteConfirmationModal";
+import toast from "react-hot-toast";
 
 export default function UserManagementTable() {
-  const users = [
+  const initialUsers = [
     {
       id: 1,
       name: "Alyvia Kelley",
@@ -148,12 +150,15 @@ export default function UserManagementTable() {
       dateOfBirth: "11/28/1954",
     },
   ];
-
+  const [isDelete, setIsDelete] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 8;
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
+  const [users, setUsers] = useState(initialUsers);
+
   // Filter users based on search term
   const filteredUsers = users.filter((user) =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -162,6 +167,28 @@ export default function UserManagementTable() {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
+  const confirmDelete = () => {
+    if (userToDelete) {
+      setUsers((prevUsers) =>
+        prevUsers.filter((user) => user.id !== userToDelete.id)
+      );
+      toast.success(`User ${userToDelete.name} deleted successfully`);
+      setIsDelete(false);
+      setUserToDelete(null);
+
+      // Adjust current page if necessary after deletion
+      const newFilteredUsers = users.filter(
+        (user) =>
+          user.id !== userToDelete.id &&
+          user.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      const newTotalPages = Math.ceil(newFilteredUsers.length / itemsPerPage);
+      if (currentPage > newTotalPages && newTotalPages > 0) {
+        setCurrentPage(newTotalPages);
+      }
+    }
+  };
+
   // Reset to first page when searching
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
@@ -173,7 +200,10 @@ export default function UserManagementTable() {
     setSelectedUser(user);
     setShowPopup(true);
   };
-
+  const handleDelete = (user) => {
+    setUserToDelete(user);
+    setIsDelete(true);
+  };
   // Close popup
   const closePopup = () => {
     setShowPopup(false);
@@ -266,7 +296,10 @@ export default function UserManagementTable() {
                       <button className="text-black hover:text-blue-600 p-2 border border-[#CED4DA] rounded-md bg-white">
                         <MdOutlineBlock className="w-4 h-4" />
                       </button>
-                      <button className="text-black hover:text-red-600 p-2 border border-[#CED4DA] rounded-md bg-white">
+                      <button
+                        onClick={() => handleDelete(user)}
+                        className="text-black hover:text-red-600 p-2 border border-[#CED4DA] rounded-md bg-white"
+                      >
                         <Trash2 className="w-4 h-4" />
                       </button>
                       <button
@@ -290,6 +323,19 @@ export default function UserManagementTable() {
         </table>
         {/* Profile Popup */}
         {showPopup && <ProfilePopup user={selectedUser} onClose={closePopup} />}
+        {isDelete && (
+          <DeleteConfirmationModal
+            isOpen={isDelete}
+            onClose={() => {
+              setIsDelete(false);
+              setUserToDelete(null);
+            }}
+            onConfirm={confirmDelete}
+            title="Are you sure?"
+            message={`Do you want to delete ${userToDelete?.name}?`}
+            confirmText="Delete"
+          />
+        )}
       </div>
 
       {/* Pagination */}
