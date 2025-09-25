@@ -230,7 +230,7 @@ export default function UserManagementTable() {
   };
 
   return (
-    <div className="bg-white rounded-lg overflow-hidden w-10/12 mx-auto my-auto h-[90vh]">
+    <div className="bg-white rounded-lg overflow-y-scroll w-full overflow-hidden px-4 mx-auto my-auto h-[calc(100vh-64px)]">
       {/* Search Header */}
       <div className="p-4 pr-1 border-gray bg-gray-50">
         <div className="relative max-w-sm ml-auto">

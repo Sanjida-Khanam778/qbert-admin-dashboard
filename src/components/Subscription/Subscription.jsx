@@ -49,7 +49,7 @@ export default function Subscription() {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50 p-8">
+      <div className="h-[calc(100vh-64px)] bg-gray-50 p-4 lg:p-8">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="flex items-center justify-between">
@@ -66,10 +66,10 @@ export default function Subscription() {
           </div>
 
           {/* Plans Grid */}
-          <div className="flex flex-col items-center justify-center h-[60vh]">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="flex flex-col items-center justify-center my-10 md:my-20 lg:mt-32 xl:mt-40">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 lg:gap-6">
               {/* Monthly Plan */}
-              <div className="bg-blue-50 rounded-lg px-8 py-10 relative">
+              <div className="bg-blue-50 rounded-lg px-2 lg:px-8 py-10 relative">
                 <button
                   onClick={() => handleEditPlan("monthly")}
                   className="absolute top-4 right-4 text-gray-400 hover:text-black font-semibold"
@@ -81,7 +81,7 @@ export default function Subscription() {
                   <h3 className="text-lg font-semibold text-secondary mb-2">
                     Monthly
                   </h3>
-                  <div className="text-3xl font-bold text-secondary mb-1">
+                  <div className="text-xl lg:text-3xl font-bold text-secondary mb-1">
                     $7.99
                   </div>
                   <p className="text-sm text-black font-semibold">per month</p>
@@ -98,8 +98,8 @@ export default function Subscription() {
               </div>
 
               {/* Lifetime Plan */}
-              <div className="bg-green-100 rounded-lg px-8 py-10 relative">
-                <div className="absolute inset-0 rounded-lg bg-green-100 -z-10 scale-y-125"></div>
+              <div className="bg-green-100 rounded-lg px-2 lg:px-8 py-10 relative">
+                <div className="absolute inset-0 rounded-lg bg-green-100 -z-10 scale-y-125 hidden md:block"></div>
                 <button
                   onClick={() => handleEditPlan("lifetime")}
                   className="absolute top-4 right-4 text-gray-400 hover:text-black font-semibold"
@@ -111,7 +111,7 @@ export default function Subscription() {
                   <h3 className="text-lg font-semibold text-secondary mb-2">
                     Lifetime
                   </h3>
-                  <div className="text-3xl font-bold text-secondary mb-1">
+                  <div className="text-xl lg:text-3xl font-bold text-secondary mb-1">
                     $119.99
                   </div>
                   <p className="text-sm text-black font-semibold">
@@ -136,7 +136,7 @@ export default function Subscription() {
               </div>
 
               {/* Annual Plan */}
-              <div className="bg-blue-50 rounded-lg px-8 py-10 relative">
+              <div className="bg-blue-50 rounded-lg px-2 lg:px-8 py-10 relative">
                 <button
                   onClick={() => handleEditPlan("annual")}
                   className="absolute top-4 right-4 text-gray-400 hover:text-black font-semibold"
@@ -148,7 +148,7 @@ export default function Subscription() {
                   <h3 className="text-lg font-semibold text-secondary mb-2">
                     Annual
                   </h3>
-                  <div className="text-3xl font-bold text-secondary mb-1">
+                  <div className="text-xl lg:text-3xl font-bold text-secondary mb-1">
                     $69.99
                   </div>
                   <p className="text-sm text-black font-semibold">

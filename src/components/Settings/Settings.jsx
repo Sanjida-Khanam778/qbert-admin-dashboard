@@ -141,13 +141,33 @@ export default function TextEditor() {
     setIsEditing(true);
   };
   // Dummy content for tabs
-  const dummyTerms = `<h2>Terms & Conditions</h2><ul><li>You must be at least 18 years old to use this service.</li><li>Do not share your password with anyone.</li><li>All data is confidential and protected.</li></ul>`;
-  const dummyPrivacy = `<h2>Privacy Policy</h2><p>Your data is stored securely and will not be shared with third parties. We use cookies to improve user experience.</p>`;
-
+const dummyTerms = `
+  <h2>Terms & Conditions</h2> <br/>
+  <ul>
+    <li>Do not share your password with anyone.</li>
+    <li>You are responsible for all activities under your account.</li>
+    <li>Do not misuse the platform or attempt unauthorized access.</li>
+    <li>Payments (if applicable) are final and non-refundable.</li>
+    <li>We reserve the right to suspend or terminate accounts for violations.</li>
+    <li>These terms may be updated occasionally. Continued use means acceptance.</li>
+  </ul>
+`;
+const dummyPrivacy = `
+  <h2>Privacy Policy</h2> <br/>
+  <ul>
+    <li>We collect personal details such as name, email, and usage data.</li>
+    <li>Your information is used to provide and improve our services.</li>
+    <li>We do not sell or rent your personal data to third parties.</li>
+    <li>Data may be shared with trusted service providers (e.g., payment gateways).</li>
+    <li>We use cookies and tracking tools to enhance user experience.</li>
+    <li>You can request access, correction, or deletion of your data.</li>
+    <li>We may update this policy from time to time with a new “Last Updated” date.</li>
+  </ul>
+`;
   // Show dummy content if not editing and no API data
   return (
-    <div className="h-[90vh] overflow-y-scroll bg-accent">
-      <div className="w-11/12 h-[90vh] mx-auto mb-6">
+    <div className="h-[calc(100vh-64px)] overflow-y-scroll bg-accent">
+      <div className="w-11/12 h-[calc(100vh-64px)] mx-auto mb-6">
         {/* Tabs */}
         <div className="flex items-center justify-between">
           <div className="flex mt-2">
