@@ -21,11 +21,7 @@ import EditPackage from "../components/Subscription/EditPackage";
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: (
-    
-        <Dashboard />
-     
-    ),
+    element: <Dashboard />,
     errorElement: <h1>404</h1>,
     children: [
       {
@@ -41,49 +37,10 @@ export const router = createBrowserRouter([
         element: <UserProfileDashboard />,
       },
       {
-        path: "/recipe",
-        element: <Recipe />,
-      },
-      {
-        path: "/recipe/upload",
-        element: <RecipeUploadForm />,
-      },
-      {
-        path: "/recipe/:id",
-        element: <RecipeDetails />,
-      },
-      {
-        path: "/recipe/update/:id",
-        element: <RecipeUpdate />,
-      },
-      {
-        path: "/workout",
-        element: <Workout />,
-      },
-      {
-        path: "/workout/upload",
-        element: <WorkoutUploadForm />,
-      },
-      {
-        path: "/workout/:id",
-        element: <WorkoutDetails />,
-      },
-      {
-        path: "/workout/update/:id",
-        element: <WorkoutUpdate />,
-      },
-      {
         path: "/subscription",
         element: <Subscription />,
       },
-      {
-        path: "/subscription/add",
-        element: <AddPackage />,
-      },
-      {
-        path: "/subscription/edit/:id",
-        element: <EditPackage />,
-      },
+      
       {
         path: "/settings",
         element: <Settings />,

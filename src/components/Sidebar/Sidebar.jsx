@@ -50,7 +50,7 @@ export default function Sidebar() {
           </li>
           <li>
             <NavLink
-              to={"/recipe"}
+              to={"/subscription"}
               className="flex items-center px-8 py-4 hover:bg-gradient-to-r hover:from-[#0E4269] hover:via-[#00B5CA] hover:to-[#FECB2C] hover:text-white  "
             >
               <TbDiamond className="mr-3 text-2xl" />
