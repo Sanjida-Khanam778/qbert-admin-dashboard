@@ -4,6 +4,7 @@ import { TbMathGreater } from "react-icons/tb";
 import { PiLessThanBold } from "react-icons/pi";
 import { GoBlocked } from "react-icons/go";
 import { MdOutlineBlock } from "react-icons/md";
+import { ProfilePopup } from "./ProfilePopup";
 
 export default function UserManagementTable() {
   const users = [
@@ -151,13 +152,34 @@ export default function UserManagementTable() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-
-  const totalPages = Math.ceil(users.length / itemsPerPage);
-
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
+  // Filter users based on search term
+  const filteredUsers = users.filter((user) =>
+    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentUsers = users.slice(indexOfFirstItem, indexOfLastItem);
+  const currentUsers = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
+  // Reset to first page when searching
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
 
+  // Handle eye button click
+  const handleViewUser = (user) => {
+    setSelectedUser(user);
+    setShowPopup(true);
+  };
+
+  // Close popup
+  const closePopup = () => {
+    setShowPopup(false);
+    setSelectedUser(null);
+  };
   const StatusBadge = ({ status }) => {
     const isActive = status === "Active";
     return (
@@ -179,19 +201,20 @@ export default function UserManagementTable() {
   };
 
   return (
-    <div className="bg-white rounded-lg overflow-hidden w-10/12 mx-auto my-auto">
+    <div className="bg-white rounded-lg overflow-hidden w-10/12 mx-auto my-auto h-[90vh]">
       {/* Search Header */}
-      <div className="p-4 pr-0 border-gray bg-gray-50">
+      <div className="p-4 pr-1 border-gray bg-gray-50">
         <div className="relative max-w-sm ml-auto">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#ADB5BD] w-4 h-4" />
           <input
             type="text"
             placeholder="Search..."
-            className="pl-10 pr-4 py-2 w-full border border-gray rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            value={searchTerm}
+            onChange={handleSearch}
+            className="pl-10 pr-4 py-2 w-full border border-gray rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
           />
         </div>
       </div>
-
       {/* Table */}
       <div className="overflow-x-auto shadow-[1px_1px_10px_1px_rgba(0,0,0,0.1)] border-2 rounded-lg border-gray">
         <table className="w-full bg-white">
@@ -216,45 +239,58 @@ export default function UserManagementTable() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray">
-            {currentUsers.map((user, index) => (
-              <tr
-                key={user.id}
-                className={` ${
-                  index % 2 === 0 ? "bg-[#F8F9FA]" : "bg-transparent"
-                }`}
-              >
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-[#343A40]">
-                  {user.id}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {user.name}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-[#343A40]">
-                  <StatusBadge status={user.status} />
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-[#343A40]">
-                  {user.email}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-[#343A40]">
-                  {user.dateOfBirth}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <div className="flex items-center justify-end gap-2">
-                    <button className="text-black hover:text-blue-600 p-2 border border-[#CED4DA] rounded-md bg-white">
-                      <MdOutlineBlock className="w-4 h-4" />
-                    </button>
-                    <button className="text-black hover:text-red-600 p-2 border border-[#CED4DA] rounded-md bg-white">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                    <button className="text-black hover:text-gray-600 p-2 border border-[#CED4DA] rounded-md bg-white">
-                      <Eye className="w-4 h-4" />
-                    </button>
-                  </div>
+            {currentUsers.length > 0 ? (
+              currentUsers.map((user, index) => (
+                <tr
+                  key={user.id}
+                  className={` ${
+                    index % 2 === 0 ? "bg-[#F8F9FA]" : "bg-transparent"
+                  }`}
+                >
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#343A40]">
+                    {user.id}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {user.name}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-[#343A40]">
+                    <StatusBadge status={user.status} />
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#343A40]">
+                    {user.email}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#343A40]">
+                    {user.dateOfBirth}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div className="flex items-center justify-end gap-2">
+                      <button className="text-black hover:text-blue-600 p-2 border border-[#CED4DA] rounded-md bg-white">
+                        <MdOutlineBlock className="w-4 h-4" />
+                      </button>
+                      <button className="text-black hover:text-red-600 p-2 border border-[#CED4DA] rounded-md bg-white">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleViewUser(user)}
+                        className="text-black hover:text-gray-600 p-2 border border-[#CED4DA] rounded-md bg-white"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
+                  No users found matching your search.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
+        {/* Profile Popup */}
+        {showPopup && <ProfilePopup user={selectedUser} onClose={closePopup} />}
       </div>
 
       {/* Pagination */}
