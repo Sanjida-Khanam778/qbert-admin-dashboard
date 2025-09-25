@@ -19,7 +19,7 @@ export default function Sidebar() {
     dispatch(logout());
   };
   return (
-    <div className=" bg-primary text-white h-screen sticky left-0 z-20 flex flex-col justify-between w-48 md:w-64 xl:w-80">
+    <div className=" bg-primary text-white h-screen sticky left-0 z-20 flex flex-col justify-between w-48 md:w-64 xl:w-72">
       <div className="p-10 mx-auto">
         <img src={logo} alt="" />
       </div>

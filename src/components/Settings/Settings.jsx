@@ -167,7 +167,7 @@ const dummyPrivacy = `
   // Show dummy content if not editing and no API data
   return (
     <div className="h-[calc(100vh-64px)] overflow-y-scroll bg-accent">
-      <div className="w-11/12 h-[calc(100vh-64px)] mx-auto mb-6">
+      <div className="w-11/12 mx-auto mb-6">
         {/* Tabs */}
         <div className="flex items-center justify-between">
           <div className="flex mt-2">
