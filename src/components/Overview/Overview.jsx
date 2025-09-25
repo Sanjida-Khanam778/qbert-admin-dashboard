@@ -70,8 +70,8 @@ const Overview = () => {
   ];
 
   return (
-    <div className="p-6 h-[90vh] overflow-y-scroll">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto bg-white">
+    <div className="p-6 h-[calc(100vh-64px)] overflow-y-scroll">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 max-w-6xl mx-auto bg-white">
         {metrics.map((metric, idx) => (
           <div
             key={idx}
