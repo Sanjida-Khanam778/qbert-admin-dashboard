@@ -13,7 +13,7 @@ export default {
         sidebar: "#F0F0F0",
         neutral: "#263133",
         background: "#F9F9FA",
-        outline: "#c9c9c9",
+        grayText: "#6C757D",
         dark: "#202224",
         gray: "#EEEEEE",
       },
