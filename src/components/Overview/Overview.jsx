@@ -50,7 +50,7 @@ const Overview = () => {
       title: "Total Users",
       value: "40,689",
       percentage: "8.5%",
-      text: "Up from ye saturday",
+      text: "Up from saturday",
       image: up,
     },
     {
